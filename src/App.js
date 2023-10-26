@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-
+const hourswk = 24*7;
 function App() {
 
   const [form, setForm] = useState({
@@ -10,6 +10,7 @@ function App() {
 
   const [taskList, setTaskList] = useState([]);
 
+  const totalHr = taskList.reduce((acc, item) => acc + +item.hr, 0)
 
   const handelOnChange = (e) => {
     const {name, value} = e.target;
@@ -19,15 +20,22 @@ function App() {
   const handleOnSubmit = (e) => {
     e.preventDefault();  
 
-    const obj = {
-      ...form,
-      type: "entry",
-      id: randomStr(),
-    }
+      if(totalHr + +form.hr > hourswk){
+        return alert("Sorry You have not enough time to fit this task ")
+      }
+  
+      const obj = {
+        ...form,
+        type: "entry",
+        id: randomStr(),
+      }
+  
+      setTaskList([...taskList, obj])
+   
 
-    setTaskList([...taskList, obj])
-    setForm({form})
-  }
+    setForm({task: "", hr: ""})
+    }
+    
 
   const handleOnDelete =(id, task) => {
     
@@ -88,6 +96,7 @@ function App() {
             placeholder="Coding.."
             aria-label="First name"
             name="task"
+            value={form.task}
             onChange={handelOnChange}
             required
           />
@@ -97,9 +106,10 @@ function App() {
             type="number"
             min="1"
             className="form-control"
-            placeholder="23"
+            placeholder="Please enter total hour"
             aria-label="Last name"
             name="hr"
+            value={form.hr}
             onChange={handelOnChange}
             required
           />
@@ -123,7 +133,7 @@ function App() {
 
             {
               entry.map((item, i) => {
-                return <tr>
+                return <tr key={i}>
             <td>{i + 1}</td>
             <td>{item.task}</td>
             <td>{item.hr}hr</td>
@@ -152,7 +162,7 @@ function App() {
           <tbody id="bad">
           {
               bad.map((item, i) => {
-                return <tr>
+                return <tr key={i}>
             <td>{i + 1}</td>
             <td>{item.task}</td>
             <td>{item.hr}hr</td>
@@ -160,10 +170,9 @@ function App() {
               <button onClick = {() => handleOnDelete(item.id, item.task)}
               class="btn btn-danger">
                 <i class="fa-solid fa-trash"></i>
-              </button>
-              <button
+              </button>{" "}<button
               onClick={() =>switchTask(item.id, "entry")}
-              class="btn btn-success">
+              class="btn btn-info">
                 <i class="fa-solid fa-arrow-left"></i>
               </button>
             </td>
@@ -171,15 +180,19 @@ function App() {
               })}
           </tbody>
         </table>
-        <div className="alert alert-info">
-          You could have save = <span id="badHr">0</span>hr
+        <div className="alert alert-warning">
+          You could have save = <span id="badHr">
+          {bad.reduce((acc, item) => acc+ +item.hr, 0)}
+          </span>hr
         </div>
       </div>
     </div>
 
     {/* <!-- toat time allocated --> */}
     <div className="alert alert-info">
-      Total hrs per week allocated = <span id="totalHr">0</span>hr
+      Total hrs per week allocated = <span id="totalHr">
+        {totalHr}
+        </span>hr
     </div>
   </div>
 </div>
