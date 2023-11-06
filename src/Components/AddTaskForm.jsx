@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
-import {getAllTasks, postData } from '../helper/axiosHelper'
+import { postData } from '../helper/axiosHelper'
 const hourswk = 24*7;
-const AddTaskForm = ({resp, setResp, totalHr}) => {
+const AddTaskForm = ({resp, setResp, totalHr, getTasks}) => {
     const [form, setForm] = useState({
         task: "",
         hr: 0,
@@ -29,9 +29,12 @@ const AddTaskForm = ({resp, setResp, totalHr}) => {
             //reset state
             setForm({task: "", hr: ""})
             //call api to fetch all the task
-            getAllTasks();
+            getTasks();
           }
         }
+
+        
+
   return (
     <form
       onSubmit={handleOnSubmit}
